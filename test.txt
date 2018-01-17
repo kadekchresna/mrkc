@@ -1,0 +1,11 @@
+#include "SoftwareSerial.h"
+String ssid ="yourSSID";
+
+String password="yourPassword";
+SoftwareSerial esp(6, 7);// RX, TX
+
+String data;
+
+String server = "yourServer"; // www.example.com
+
+String uri = "yourURI";// our example is /esppost.php

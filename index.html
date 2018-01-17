@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta http-equiv="refresh" content="5" />
+    <title>Monitoring Rumah Kaca</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/scrolling-nav.css" rel="stylesheet">
+    <link href="css/default.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<!-- The #page-top ID is part of the scrolling feature - the data-spy and data-target are part of the built-in Bootstrap scrollspy function -->
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div id="a" class="alert" style="display: none;">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+        <div id="panas" style="display: none;"> Ruangan terlalu panas!</div> <div id="kering_u" style="display: none;"> Udara terlalu kering !</div> <div id="kering" style="display: none;"> Tanah terlalu kering !</div> <div id="panaskering" style="display: none;"> Ruangan terlalu panas dan Tanah terlalu kering </div> <div id="panasudara" style="display: none;"> Ruangan terlalu panas! dan Udara terlalu kering! </div> <div id="keringudara" style="display: none;"> Tanah terlalu kering dan Udara terlalu kering !</div> <div id="semua" style="display: none;"> Ruangan terlalu panas, Udara terlalu kering dan Tanah terlalu kering !</div> 
+    </div>
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Home</a>
+
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a class="page-scroll" href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">Suhu</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#tanah">Kelembaban Tanah</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#udara">Kelembaban Udara</a>
+                    </li>                    
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+
+        </div>
+        <!-- /.container -->
+
+    </nav>
+
+    <!-- Intro Section -->
+    <section id="intro" class="intro-section">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <br>
+                    <br>
+                    <br>
+                    <h1>Monitoring Rumah Kaca</h1>
+                    <br>    
+                    <a class="btn btn-default page-scroll" href="#about">Click Me to Scroll Down Nigga!</a>
+                    <br>
+                    <br>
+                    <script>
+                        function myFunction() {
+                            var x = document.getElementById('a');
+                             x.style.display = 'block';
+                             var myAudio = new Audio('/alarm.mp3'); 
+                             myAudio.addEventListener('ended', function() {
+                                    this.currentTime = 0;
+                                    this.play();
+                                    
+                                }, false);
+                              myAudio.play();
+                              
+                         }
+                        function myFunction1() {
+                            var x = document.getElementById('panas');
+                             x.style.display = 'block';
+                                                             
+                                                        
+                         }
+                        function myFunction2() {
+                            var x = document.getElementById('kering');
+                             x.style.display = 'block';
+                                                        
+                         }
+                        function myFunction3() {
+                            var x = document.getElementById('panaskering');
+                             x.style.display = 'block';
+                             
+                         }
+                        function myFunction5() {
+                            var x = document.getElementById('kering_u');
+                             x.style.display = 'block';
+                             
+                         }
+                        function myFunction6() {
+                            var x = document.getElementById('panasudara');
+                             x.style.display = 'block';
+                             
+                         }
+                        function myFunction7() {
+                            var x = document.getElementById('semua');
+                             x.style.display = 'block';
+                             
+                         }
+                        function myFunction8() {
+                            var x = document.getElementById('keringudara');
+                             x.style.display = 'block';
+                             
+                         }
+                         function stop(){
+                            var myAudio = new Audio('/alarm.mp3'); 
+                            myAudio.pause();
+                            myAudio.currentTime = 0;
+                         }
+                    
+                        <?php 
+                        define('DB_HOST', '127.0.0.1');
+                        define('DB_USERNAME', 'root');
+                        define('DB_PASSWORD', 'root');
+                        define('DB_NAME', 'iot_3');
+
+                        //get connection
+                        $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+                        if(!$mysqli){
+                            die("Connection failed: " . $mysqli->error);
+                        }
+                        $query = sprintf("SELECT suhu, waktu, lembab_udara, lembab_tnh FROM rk WHERE id IN (SELECT MAX(id) FROM rk) ");
+
+                        //execute query
+                        $result = $mysqli->query($query);
+
+                        if ($result->num_rows > 0) {
+                        // output data of each row
+                        while($row = $result->fetch_assoc()) {
+                            
+                                if ($row["suhu"]>37 && $row["lembab_tnh"]>100 && $row["lembab_udara"]>100){
+                                    
+                                    echo "myFunction(); myFunction7();";
+                                }
+                                elseif ($row["suhu"]>37 && $row["lembab_tnh"]<20){
+                                    
+                                    echo "myFunction(); myFunction3();";
+                                }
+                                elseif ($row["suhu"]>37 && $row["lembab_udara"]<50){
+                                    
+                                    echo "myFunction(); myFunction6();";
+                                }
+                                elseif ($row["lembab_tnh"]<20 && $row["lembab_udara"]<50){
+                                    
+                                    echo "myFunction(); myFunction8();";
+                                }
+                                elseif ($row["suhu"]>22 ){
+                                    
+                                    echo "myFunction(); myFunction1();";
+                                }
+                                elseif ($row["lembab_tnh"]<20 ){
+                                    
+                                    echo "myFunction(); myFunction2();";
+                                }
+                                elseif ($row["lembab_udara"]<50 ){
+                                    
+                                    echo "myFunction(); myFunction5();";
+                                }
+                                else{
+                                    echo "stop(); ";
+
+
+                                }
+                            }
+                        }
+                        ?>
+
+                            
+                        </script>
+                        <?php 
+                        
+
+                        //get connection
+                        $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+                        if(!$mysqli){
+                            die("Connection failed: " . $mysqli->error);
+                        }
+                        $query = sprintf("SELECT suhu, waktu, lembab_udara, lembab_tnh FROM rk WHERE id IN (SELECT MAX(id) FROM rk) ");
+
+                        //execute query
+                        $result = $mysqli->query($query);
+
+                        if ($result->num_rows > 0) {
+                        // output data of each row
+                        while($row = $result->fetch_assoc()) {
+                            echo " Suhu : ". $row["suhu"]. "°, Kelembaban Udara : " . $row["lembab_udara"]. "%RH, Kelembaban Tanah : " . $row["lembab_tnh"]. "%<br>";
+                            echo "Data Pada Tanggal : ".$row["waktu"];
+
+                            }
+                        }
+                        ?>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                        <div class="chart-container">
+                            <canvas id="line-chartcanvas"></canvas>
+                        </div>
+                        <script src="js/jquery.min.js"></script>
+                        <script src="js/Chart.min.js"></script>
+                        <script src="js/line-db-php.js"></script>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tanah" class="about-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                        <div class="chart-container">
+                            <canvas id="line-chartcanvas2"></canvas>
+                        </div>
+                        <script src="js/jquery.min.js"></script>
+                        <script src="js/Chart.min.js"></script>
+                        <script src="js/line-db-php-tanah.js"></script>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="udara" class="about-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                        <div class="chart-container">
+                            <canvas id="line-chartcanvas3"></canvas>
+                        </div>
+                        <script src="js/jquery.min.js"></script>
+                        <script src="js/Chart.min.js"></script>
+                        <script src="js/line-db-php-udara.js"></script>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Scrolling Nav JavaScript -->
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/scrolling-nav.js"></script>
+
+</body>
+
+</html>
