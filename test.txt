@@ -1,11 +1,116 @@
-#include "SoftwareSerial.h"
-String ssid ="yourSSID";
+#include <SoftwareSerial.h>
+#define DEBUG true
+#include <DHT.h>
+#define DHTPIN 5
+#define DHTTYPE DHT11 
+ 
+DHT dht(DHTPIN, DHTTYPE);
+int sensorPin = A0;  
+int powerPin = 7;    
+//ESP
+SoftwareSerial ser(2, 3); // TX,RX
 
-String password="yourPassword";
-SoftwareSerial esp(6, 7);// RX, TX
+void setup() {
 
-String data;
+  delay(5000);               
+  Serial.begin(115200);
+  ser.begin(115200);
+  dht.begin();
+  pinMode(powerPin, OUTPUT);
+  // default bernilai LOW
+  digitalWrite(powerPin, LOW);
+  connectWifi();
+  Serial.print("TCP/UDP Connection...\n");
+  sendCommand("AT+CIPMUX=0\r\n",2000,DEBUG); 
+  delay(5000);
+}
 
-String server = "yourServer"; // www.example.com
+void loop() {
+  
+  float h = dht.readHumidity();
+  // Baca temperatur dalam celcius
+  float t = dht.readTemperature();
+  //tampilkan pada serial monitor 
+  delay(10000);
+  Serial.print("Kelembaban Udara: ");
+  Serial.print(h);
+  Serial.print(" Suhu: ");
+  Serial.println(t);
+  Serial.print("Nilai Kelembaban Tanah: ");
+  Serial.println(bacaSensor());
+  // baca setiap 5 detik
+  delay(10000);
+  delay(1000);
+  String myString1 = String(h);
+  String myString2 = String(t);
+  String myString3 = String(bacaSensor());
+  sendDataID(myString1, myString2, myString3);
+  delay(10000);
+  
+}
 
-String uri = "yourURI";// our example is /esppost.php
+void sendDataID(String myString1, String myString2,String myString3 ) {
+  String cmd = "AT+CIPSTART=\"TCP\",\"";
+  
+  cmd += "192.168.100.2";
+  cmd += "\",80\r\n";
+  sendCommand(cmd,1000,DEBUG);
+  delay(5000);
+  
+  String cmd2 = "GET /TES_ESP.php?suhu=";                  
+  cmd2 += myString2;
+  cmd2 += "&lmbbu=";
+  cmd2 += myString1;
+  cmd2 += "&lmbbt=";
+  cmd2 += myString3;   
+  cmd2 += " HTTP/1.1\r\n";
+  cmd2 += "Host: 192.168.100.2\r\n\r\n\r\n"; 
+  String pjg="AT+CIPSEND=";
+  pjg += cmd2.length();
+  pjg += "\r\n";
+    
+  sendCommand(pjg,1000,DEBUG);
+  delay(500);
+  sendCommand(cmd2,1000,DEBUG);
+  delay(5000);
+}
+
+String sendCommand(String command, const int timeout, boolean debug) {
+  String response = "";      
+  ser.print(command); 
+  long int time = millis();
+  while( (time+timeout) > millis()) {
+    while(ser.available()) {      
+      char c = ser.read(); 
+      response+=c;
+    }  
+  }      
+  if(debug) {
+    Serial.print(response);
+  }      
+  return response;
+}
+
+void connectWifi() {
+  //Set-wifi
+  Serial.print("Restart Module...\n");
+  sendCommand("AT+RST\r\n",2000,DEBUG);
+  delay(10000);
+  Serial.print("Set wifi mode : STA...\n");
+  sendCommand("AT+CWMODE=1\r\n",1000,DEBUG);
+  delay(10000);
+  Serial.print("Connect to access point...\n");
+  sendCommand("AT+CWJAP=\"GANESHA\",\"ganesh9876\"\r\n",3000,DEBUG);
+  delay(10000);
+  Serial.print("Check IP Address...\n");
+  sendCommand("AT+CIFSR\r\n",1000,DEBUG); 
+  delay(10000);
+}
+int bacaSensor() {
+
+  digitalWrite(powerPin, HIGH);
+  delay(500);
+  int nilaiSensor = analogRead(sensorPin);
+  digitalWrite(powerPin, LOW);
+  return 1023 - nilaiSensor;
+}
